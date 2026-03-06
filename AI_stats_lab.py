@@ -2,20 +2,15 @@
 AI Stats Lab
 Random Variables and Distributions
 """
-
 import numpy as np
 import math
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 from scipy.integrate import quad
-
-
 # =========================================================
 # QUESTION 1 — CDF Probabilities
 # =========================================================
-
-def cdf_probabilities():
-    """
+"""
     STEP 1
     Compute analytically
 
@@ -35,10 +30,22 @@ def cdf_probabilities():
         analytic_lt5
         analytic_interval
         simulated_gt5
-    """
+"""
+def cdf_probabilities():
 
-    raise NotImplementedError
+    # Analytical calculations
+    analytic_gt5 = math.exp(-5)
 
+    analytic_lt5 = 1 - math.exp(-5)
+
+    analytic_interval = math.exp(-3) - math.exp(-7)
+
+    # Monte Carlo Simulation
+    samples = np.random.exponential(1, 100000)
+
+    simulated_gt5 = np.mean(samples > 5)
+
+    return analytic_gt5, analytic_lt5, analytic_interval, simulated_gt5
 
 # =========================================================
 # QUESTION 2 — PDF Validation and Plot
@@ -69,16 +76,33 @@ def pdf_validation_plot():
         integral_value
         is_valid_pdf
     """
+    def f(x):
+        return 2 * x * np.exp(-x**2)
 
-    raise NotImplementedError
+    # compute integral
+    integral_value, _ = quad(f, 0, np.inf)
 
+    # check if valid pdf
+    if abs(integral_value - 1) < 0.001:
+        is_valid_pdf = True
+    else:
+        is_valid_pdf = False
 
+    # plot the function
+    x = np.linspace(0, 3, 200)
+    y = f(x)
+
+    plt.plot(x, y)
+    plt.title("PDF: 2x e^(-x^2)")
+    plt.xlabel("x")
+    plt.ylabel("f(x)")
+    plt.show()
+
+    return integral_value, is_valid_pdf
 # =========================================================
 # QUESTION 3 — Exponential Distribution
 # =========================================================
-
-def exponential_probabilities():
-    """
+"""
     X ~ Exp(1)
 
     STEP 1
@@ -100,16 +124,25 @@ def exponential_probabilities():
         simulated_gt5
         simulated_interval
     """
+def exponential_probabilities():
+    # Analytical
+    analytic_gt5 = math.exp(-5)
 
-    raise NotImplementedError
+    analytic_interval = math.exp(-1) - math.exp(-3)
 
+    # Simulation
+    samples = np.random.exponential(1, 100000)
+
+    simulated_gt5 = np.mean(samples > 5)
+
+    simulated_interval = np.mean((samples > 1) & (samples < 3))
+
+    return analytic_gt5, analytic_interval, simulated_gt5, simulated_interval
 
 # =========================================================
 # QUESTION 4 — Gaussian Distribution
 # =========================================================
-
-def gaussian_probabilities():
-    """
+"""
     X ~ N(10,2^2)
 
     STEP 1
@@ -136,5 +169,21 @@ def gaussian_probabilities():
         simulated_le12
         simulated_interval
     """
+def gaussian_probabilities():
 
-    raise NotImplementedError
+    mu = 10
+    sigma = 2
+
+    # Analytical
+    analytic_le12 = norm.cdf(12, mu, sigma)
+
+    analytic_interval = norm.cdf(12, mu, sigma) - norm.cdf(8, mu, sigma)
+
+    # Simulation
+    samples = np.random.normal(mu, sigma, 100000)
+
+    simulated_le12 = np.mean(samples <= 12)
+
+    simulated_interval = np.mean((samples > 8) & (samples < 12))
+
+    return analytic_le12, analytic_interval, simulated_le12, simulated_interval
